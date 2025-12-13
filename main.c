@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <dirent.h>
 /*Funtion to clear the screen*/
 void clear(){
 	system("clear"); //stdlib function "cls" for windows this is for linux and mac
 }
 void type(const char command[]);
 void dis(const char file[]);
+void list();
+void list_path(const char path[]);
 
-int main(int argc, char *argv[]) {
+int main() {
   // Flush after every printf
   setbuf(stdout, NULL);
 
@@ -30,6 +32,10 @@ int main(int argc, char *argv[]) {
 	dis(command+4);
     else if (strcmp(command, "clear") == 0)
 	clear();
+    else if (strcmp(command, "list") == 0)
+	list();
+    else if (strncmp(command, "list ", 5) == 0)
+	list_path(command+5);
     else 
       printf("%s: command not found\n", command);
   }
@@ -37,7 +43,7 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-/*function for the type command it tells if a command is a shell builtin or external application*/
+/*Function for the type command it tells if a command is a shell builtin or external application*/
 void type(const char command[]) {
   if (strcmp(command, "echo") == 0 || strcmp(command, "type") == 0 ||
       strcmp(command, "exit") == 0 || strcmp(command, "clear") == 0 || 
@@ -62,4 +68,24 @@ void dis(const char file[]){
 		printf("%c", ch);
 	}
 	printf("\n");
+}
+
+/*Function to print all the files and sub-directores in the current directory*/
+void list(){
+	DIR *dir = opendir(".");
+	struct dirent *content;		//content here is the structure variable for the dir content storage
+	while((content= readdir(dir))!=NULL)
+		printf("%s\t", content->d_name);
+	printf("\n");
+	closedir(dir);
+}
+
+/*Function to print all the files and sub-directories in the mentioned path*/ 
+void list_path(const char path[]){
+	DIR *dir = opendir(path);
+	struct dirent *content;		//content here is the structure variable for the dir content storage
+	while((content= readdir(dir))!=NULL)
+		printf("%s\t", content->d_name);
+	printf("\n");
+	closedir(dir);
 }
