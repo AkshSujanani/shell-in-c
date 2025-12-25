@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <unistd.h>
+
 /*Funtion to clear the screen*/
 void clear(){
 	system("clear"); //stdlib function "cls" for windows this is for linux and mac
@@ -10,12 +12,14 @@ void type(const char command[]);
 void dis(const char file[]);
 void list();
 void list_path(const char path[]);
+void pwd();
 
 int main() {
   // Flush after every printf
   setbuf(stdout, NULL);
 
   while (1) {
+    pwd();
     printf("$ ");
     char command[1024];
 
@@ -36,6 +40,8 @@ int main() {
 	list();
     else if (strncmp(command, "list ", 5) == 0)
 	list_path(command+5);
+    else if (strcmp(command, "pwd") == 0)
+	pwd();
     else 
       printf("%s: command not found\n", command);
   }
@@ -88,4 +94,9 @@ void list_path(const char path[]){
 		printf("%s\t", content->d_name);
 	printf("\n");
 	closedir(dir);
+}
+
+void pwd(){
+	char pwd[1024];
+	printf("%s\n", getcwd(pwd, sizeof(pwd)));
 }
